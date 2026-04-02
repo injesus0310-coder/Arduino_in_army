@@ -5,7 +5,9 @@
 <summary>📅 2026.03.31 - 04.02 (D-201) 개발일지 (클릭해서 보기)</summary>
 
 [
-<img width="766" height="711" alt="3color_LED_switch" src="https://github.com/user-attachments/assets/55f7a6f5-45f5-434e-a602-fdfd15030f0b" />
+![회로도 설명](./3color_LED_switch.png)
+*팅커캐드로 구현한 스위치 및 가변저항 제어 회로도입니다*
+
 📝 [DevLog] Project: 3색 LED & 가변저항 제어 구현기
 📅 기간: 2026.03.31 - 04.02 (3일간의 집중 구현)
 
