@@ -1,10 +1,12 @@
-# Arduino_in_army
+<img width="766" height="711" alt="3color_LED_switch" src="https://github.com/user-attachments/assets/401983f9-cc04-465b-b565-c0773dedf570" /># Arduino_in_army
 군대에서 꿈을 향해 나아가는 청년의 기록 Arduino, C++, IoT, RGB LED
 
 <details>
 <summary>📅 2026.03.31 - 04.02 (D-201) 개발일지 (클릭해서 보기)</summary>
 
-[📝 [DevLog] Project: 3색 LED & 가변저항 제어 구현기
+[
+<img width="766" height="711" alt="3color_LED_switch" src="https://github.com/user-attachments/assets/55f7a6f5-45f5-434e-a602-fdfd15030f0b" />
+📝 [DevLog] Project: 3색 LED & 가변저항 제어 구현기
 📅 기간: 2026.03.31 - 04.02 (3일간의 집중 구현)
 
 "기초가 흔들리면 성은 무너진다. 스위치 하나, 변수 하나라도 완벽히 제어할 수 있을 때까지 반복했습니다."
