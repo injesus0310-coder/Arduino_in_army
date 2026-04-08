@@ -10,7 +10,7 @@ Arduino_in_army
 * **[2026-03-31 ~ 04-02: 3색 LED & 스위치 상태 제어 로직 정립](./Develop_Log/20260402_RGB_LED.md)**
 
 </details>
-### 📅 **2026.04.07 (D-196) 개발일지**
+### 📅 __2026.04.07 (D-196) 개발일지__
 <details>
 <summary>  details is on my Develop_Log
 </summary>
