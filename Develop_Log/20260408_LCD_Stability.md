@@ -4,7 +4,7 @@
 <summary>📸 회로도 보기 (클릭)</summary>
 
 ![TMP36결합 LCD](../images/LCD_TMP36.png)
-
+![LCD_TMP36_회로도](업로드 예정: 네트워크 오류로 인한 대기 중)
 </details>
 
 ### 📝 작업 내용
