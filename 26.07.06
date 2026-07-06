@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define max 5
+
+typedef struct Queue{
+  int front;
+  int rear;
+  int data[max];
+} Queue ;
+
+void init(Queue *q){
+  q->front = q->rear = 0;
+}
+
+int is_full(Queue *q){
+  return q->front == (q->rear + 1) % max;
+}
+
+int is_empty(Queue *q){
+  return q->front == q->rear;
+}
+
+void enqueue(Queue *q, int item){
+  if(is_full(q)){
+    printf("Error Queue is full");
+    exit(1);
+  }
+  q->rear = (q->rear +1) % max;
+  q->data[(q->rear)] = item;
+}
+
+int dequeue(Queue *q){
+  if(is_empty(q)){
+    printf("Error Queue is empty");
+    exit(1);
+  }
+
+  q->front = (q->front +1) % max;
+  return(q->data[(q->front)]);
+}
+
+int main(){
+  Queue q;
+  int put = 0;
+  init(&q);
+
+
+  scanf("입력 : %d",&put);
+  enqueue(&q,put);
+  dequeue(&q);
+}
