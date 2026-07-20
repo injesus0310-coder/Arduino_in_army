@@ -26,7 +26,7 @@ void enqueue(Queue *q, int item){
     printf("Queue is full");
     exit(1);
   }
-  return q->raer = (q->rear +1) % MAX;
+  return q->rear = (q->rear +1) % MAX;
     q->data[q->rear] = item;
 }
 
