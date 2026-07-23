@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_DEQUE_SIZE 5
+
+typedef int element;
+
+typedef struct DequeType {
+    element data[MAX_DEQUE_SIZE];
+    int front, rear;
+} DequeType;
+
+// 표준 에러(stderr)로 에러 출력 후 프로그램 종료
+void error(const char *message) {
+    fprintf(stderr, "%s\n", message);
+    exit(1);
+}
+
+void init_deque(DequeType *d) {
+    d->front = d->rear = 0;
+}
+
+int is_empty(DequeType *d) {
+    return (d->front == d->rear);
+}
+
+// 수정: (rear + 1) 전체를 괄호로 묶음
+int is_full(DequeType *d) {
+    return ((d->rear + 1) % MAX_DEQUE_SIZE == d->front);
+}
+
+// 뒤로 넣기 (Push Rear)
+void add_rear(DequeType *d, element item) {
+    if (is_full(d)) { // 수정: (d) 인자 전달
+        error("Deque is full.");
+    }
+    d->rear = (d->rear + 1) % MAX_DEQUE_SIZE;
+    d->data[d->rear] = item;
+}
+
+// 앞으로 꺼내기 (Pop Front)
+element delete_front(DequeType *d) {
+    if (is_empty(d)) { // 수정: (d) 인자 전달
+        error("Deque is empty.");
+    }
+    d->front = (d->front + 1) % MAX_DEQUE_SIZE;
+    return d->data[d->front];
+}
+
+// 앞으로 넣기 (Push Front)
+void add_front(DequeType *d, element item) {
+    if (is_full(d)) { // 수정: (d) 인자 전달
+        error("Deque is full.");
+    }
+    // 수정: front를 먼저 반시계 방향으로 한 칸 이동시킨 후 해당 위치에 저장!
+    d->front = (d->front - 1 + MAX_DEQUE_SIZE) % MAX_DEQUE_SIZE;
+    d->data[d->front] = item;
+}
+
+// 뒤로 꺼내기 (Pop Rear)
+element delete_rear(DequeType *d) {
+    int prev = d->rear;
+    if (is_empty(d)) { // 수정: (d) 인자 전달
+        error("Deque is empty.");
+    }
+    d->rear = (d->rear - 1 + MAX_DEQUE_SIZE) % MAX_DEQUE_SIZE;
+    return d->data[prev];
+}
+
+element get_rear(DequeType *d) {
+    if (is_empty(d))
+        error("Deque is empty.");
+    return d->data[d->rear];
+}
+
+element get_front(DequeType *d) {
+    if (is_empty(d))
+        error("Deque is empty.");
+    return d->data[(d->front + 1) % MAX_DEQUE_SIZE];
+}
+
+int main(int argc, const char *argv[]) {
+    DequeType deque;
+    init_deque(&deque);
+
+    printf("--- add_front로 0, 1, 2 삽입 ---\n");
+    for (int i = 0; i < 3; i++) {
+        add_front(&deque, i);
+    }
+
+    printf("현재 Front 요소: %d\n", get_front(&deque)); // 출력: 2
+    printf("현재 Rear 요소: %d\n", get_rear(&deque));   // 출력: 0
+
+    printf("\n--- delete_rear로 3개 꺼내기 ---\n");
+    for (int i = 0; i < 3; i++) {
+        printf("Pop Rear: %d\n", delete_rear(&deque)); // 출력: 0, 1, 2 순서
+    }
+
+    return 0;
+}
