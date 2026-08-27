@@ -1,0 +1,47 @@
+#include "stable_care_safety.h"
+
+typedef struct Patient {
+    int id;
+    int heart_rate;
+    int dead_flag;
+} Patient;
+
+// 환자 데이터 안전 삭제
+void sc_remove_patient(Patient** patient_ptr) {
+    if (patient_ptr == NULL || *patient_ptr == NULL) return;
+
+    // 1. 디버그 오염 태그 심기 (Use-After-Free 접근 시 이상값 감지용)
+    (*patient_ptr)->heart_rate = (int)MEM_TAG_DEADBEEF;
+
+    // 2. 안전한 free + NULL 처리
+    SAFE_FREE(*patient_ptr);
+}
+
+int main() {
+    // 1. 환자 메모리 안전 할당
+    Patient* p1 = (Patient*)sc_safe_malloc(sizeof(Patient));
+    p1->id = 101;
+    p1->heart_rate = 75;
+
+    // 2. 센서 수치 검문소 테스트
+    CHECK_HEART_RATE_VALID(p1->heart_rate); // 정상 통과
+
+    // 3. 센서 버퍼 및 카나리아 세팅
+    SafeSensorBuffer sensor_buf;
+    sc_init_buffer(&sensor_buf);
+
+    // 버퍼 무결성 점검
+    if (sc_check_buffer_integrity(&sensor_buf)) {
+        printf("[STABLE_CARE] Sensor System Initialized Safely.\n");
+    }
+
+    // 4. 환자 퇴원 시 안전 해제
+    sc_remove_patient(&p1);
+
+    // p1은 완전히 NULL이 되어 유령 메모리 접근 위험 차단
+    if (p1 == NULL) {
+        printf("[STABLE_CARE] Patient Data Freed and Set to NULL Successfully.\n");
+    }
+
+    return 0;
+}
