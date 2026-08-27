@@ -1,0 +1,78 @@
+#ifndef STABLE_CARE_SAFETY_H
+#define STABLE_CARE_SAFETY_H
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <assert.h>
+
+// -------------------------------------------------------------
+// 1. 메모리 오염/해제 태그 (DEADBEEF)
+// -------------------------------------------------------------
+#define MEM_TAG_DEADBEEF 0xDEADBEEF // 해제된 메모리 오염 태그
+#define CANARY_GUARD_VAL 0x53544142 // 카나리 경계 값 ("STAB")
+
+// -------------------------------------------------------------
+// 2. 안전한 메모리 해제 매크로 (Use-After-Free 방지)
+// -------------------------------------------------------------
+#define SAFE_FREE(ptr) do { \
+    if ((ptr) != NULL) { \
+        free(ptr); \
+        (ptr) = NULL; \
+    } \
+} while(0)
+
+// -------------------------------------------------------------
+// 3. 센서 데이터 및 환자 정보 검문소 (Assertion & Boundary Check)
+// -------------------------------------------------------------
+// 환자 객체/포인터 NULL 검사
+#define CHECK_PATIENT_NULL(ptr) \
+    assert((ptr) != NULL && "[STABLE_CARE_FATAL] Patient Data Pointer is NULL!")
+
+// 심전도(ECG)/맥박 센서 수치 유효 범위 검사 (예: 심박수 0 ~ 300)
+#define CHECK_HEART_RATE_VALID(hr) \
+    assert(((hr) >= 0 && (hr) <= 300) && "[STABLE_CARE_ALERT] Sensor Anomaly: Heart Rate Out of Bounds!")
+
+// -------------------------------------------------------------
+// 4. 안전한 메모리 할당 래퍼 (Out-Of-Memory 대응)
+// -------------------------------------------------------------
+static inline void* sc_safe_malloc(size_t size) {
+    void* ptr = malloc(size);
+    if (ptr == NULL) {
+        // 실시간 시스템에서는 메모리가 부족하면 모니터링이 중단되므로 시스템 로그 남기고 즉시 비상 종료
+        fprintf(stderr, "[CRITICAL_ERROR] StableCare System Out of Memory! (Size: %zu)\n", size);
+        exit(EXIT_FAILURE);
+    }
+    return ptr;
+}
+
+// -------------------------------------------------------------
+// 5. 센서 데이터 버퍼 오버플로우 방지 구조체 (Ring Buffer 전용)
+// -------------------------------------------------------------
+typedef struct {
+    int canary_head;       // Front Guard
+    int buffer[100];       // 센서 데이터 100개 저장소
+    int head;              // 읽기 위치
+    int tail;              // 쓰기 위치
+    int canary_tail;       // Rear Guard
+} SafeSensorBuffer;
+
+// 버퍼 초기화 및 카나리 심기
+static inline void sc_init_buffer(SafeSensorBuffer* buf) {
+    CHECK_PATIENT_NULL(buf);
+    buf->canary_head = CANARY_GUARD_VAL;
+    buf->canary_tail = CANARY_GUARD_VAL;
+    buf->head = 0;
+    buf->tail = 0;
+}
+
+// 버퍼 오버플로우(침범) 여부 실시간 검사
+static inline bool sc_check_buffer_integrity(const SafeSensorBuffer* buf) {
+    if (buf->canary_head != CANARY_GUARD_VAL || buf->canary_tail != CANARY_GUARD_VAL) {
+        fprintf(stderr, "[EMERGENCY] Sensor Buffer Overflow Detected! Data Corrupted.\n");
+        return false; // 경계 침범 발생
+    }
+    return true; // 정상
+}
+
+#endif // STABLE_CARE_SAFETY_H
