@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node{
+  int data;
+  struct Node* next;
+} Node;
+
+void insert_first(Node** head,int new_data){
+  Node* newnode = (Node*)malloc(sizeof(Node));
+  newnode->data = new_data;
+  newnode->next = *head;
+  *head = newnode;
+}
+
+void insert_last(Node** head,int new_data){
+  Node* newnode = (Node*)malloc(sizeof(Node));
+  newnode->data = new_data;
+  newnode->next = NULL;
+
+  if(*head == NULL){
+    *head = newnode;
+    return;
+  }
+
+  Node* curr = *head;
+  while(curr->next != NULL){
+    curr = curr->next;
+  }
+  curr->next = newnode;
+}
+
+void delete_first(Node** head){
+  if(head == NULL || *head == NULL){ //head = NULL 표지판이 없는 상태가 더 위험하기에 먼저 검사
+    printf("노드 존재안함");
+    return;
+  }
+
+  Node* curr = *head;
+  *head = (*head)->next;
+  free(curr);
+}
+
+void delete_last(Node** head){
+  if(head == NULL || *head == NULL){
+    printf("노드 존재안함");
+    return;
+  }
+
+  if((*head)->next == NULL){ // head->n1->NULL 의 경우엔 아래 반복문에서 NULL의 next를 읽어내야함으로 오류조건 보완
+    free(*head);
+    *head = NULL;
+    return;
+  }
+
+  Node* curr = *head;
+  while(curr->next->next != NULL){
+    curr = curr->next;
+  }
+  free(curr->next);
+  curr->next = NULL;
+}
